@@ -26,6 +26,6 @@ pub enum UserError {
     InvalidID: (),
     /// The user is not authorized to perform this action.
     UnauthorizedUser: (),
-    /// The user has not pledged to the campaign.
+    /// The user has not signed to the campaign.
     UserHasNotSigned: (),
 }

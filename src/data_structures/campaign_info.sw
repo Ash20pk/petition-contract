@@ -10,8 +10,8 @@ pub struct CampaignInfo {
     state: CampaignState,
     /// The end time for the campaign after which it becomes locked.
     deadline: u64,
-    /// The current amount pledged used to measure against the target_amount.
-    total_pledge: u64,
+    /// Total amount of signs received
+    total_signs: u64,
 }
 
 impl CampaignInfo {
@@ -34,7 +34,7 @@ impl CampaignInfo {
             author,
             state: CampaignState::Progress,
             deadline,
-            total_pledge: 0,
+            total_signs: 0,
         }
     }
 }

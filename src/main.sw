@@ -43,7 +43,7 @@ storage {
     /// This should only be incremented.
     /// Unsigning should not affect this number
     sign_count: StorageMap<Identity, u64> = StorageMap {},
-    /// Record of how much a user has pledged to a specific campaign
+    /// Record of if the user has signed to a specific campaign
     /// Locked after the deadline
     /// Map(Identity => Map(1...sign_count => Signs))
     sign_history: StorageMap<(Identity, u64), Signs> = StorageMap {},
@@ -124,15 +124,11 @@ impl Petition for Contract {
         // Retrieve the campaign in order to check its data / update it
         let mut campaign_info = storage.campaign_info.get(campaign_id).try_read().unwrap();
 
-        let mut total_signs = storage.total_campaigns.try_read().unwrap();
+        let mut total_signs = campaign_info.total_signs;
 
 
         // Only the creator (author) of the campaign can initiate the claiming process
         require(campaign_info.author == msg_sender().unwrap(), UserError::UnauthorizedUser);
-
-        // The author should only have the ability to claim after the deadline has been reached
-        // (campaign has naturally ended i.e. has not been cancelled)
-        require(campaign_info.deadline <= height().as_u64(), CampaignError::DeadlineNotReached);
 
         // The author can only claim once to prevent the entire contract from being drained
         require(campaign_info.state != CampaignState::Sucessful, UserError::SucessfulCampaign);
@@ -175,8 +171,9 @@ impl Petition for Contract {
 
         require(sign_history_index == 0, UserError::AlreadySigned);
         
-        // Pledging to a campaign that they have already pledged to
+        // signing to a campaign that they have already pledged to
         storage.sign_count.insert(user, sign_count + 1);
+
 
         // Store the data structure required to look up the campaign they have pledged to, also
         // track how much they have pledged so that they can withdraw the correct amount.
@@ -189,7 +186,7 @@ impl Petition for Contract {
 
         // The user has pledged therefore we increment the total amount that this campaign has
         // received.
-        campaign_info.total_pledge += 1;
+        campaign_info.total_signs += 1;
 
         // Campaign state has been updated therefore overwrite the previous version with the new
         storage.campaign_info.insert(campaign_id, campaign_info);
@@ -219,16 +216,19 @@ impl Petition for Contract {
         let user = msg_sender().unwrap();
         let sign_history_index = storage.sign_history_index.get((user, campaign_id)).try_read().unwrap_or(0);
 
+
         require(sign_history_index != 0, UserError::UserHasNotSigned);
 
         // User has pledged therefore retrieve the total that they have pledged
         let mut signed = storage.sign_history.get((user, sign_history_index)).try_read().unwrap();
 
         // Lower the campaign total sign by the amount the user has unpledged
-        campaign_info.total_pledge -= 1;
+        campaign_info.total_signs -= 1;
 
         // Update the state of their sign with the new version
         storage.sign_history.insert((user, sign_history_index), signed);
+
+
 
         // Update the campaign state with the updated version as well
         storage.campaign_info.insert(campaign_id, campaign_info);
