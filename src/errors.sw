@@ -19,7 +19,7 @@ pub enum CreationError {
 /// Errors related to user actions.
 pub enum UserError {
     /// The user has already claimed the proceeds from the campaign.
-    SucessfulCampaign: (),
+    SuccessfulCampaign: (),
     /// Already signed
     AlreadySigned: (),
     /// The given ID does not correspond to a campaign.

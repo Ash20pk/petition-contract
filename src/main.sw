@@ -15,7 +15,7 @@ use ::data_structures::{
 use ::errors::{CampaignError, CreationError, UserError};
 use ::events::{
     CancelledCampaignEvent,
-    SucessfulCampaignEvent,
+    SuccessfulCampaignEvent,
     CreatedCampaignEvent,
     SignedEvent,
     UnsignedEvent,
@@ -131,18 +131,18 @@ impl Petition for Contract {
         require(campaign_info.author == msg_sender().unwrap(), UserError::UnauthorizedUser);
 
         // The author can only claim once to prevent the entire contract from being drained
-        require(campaign_info.state != CampaignState::Sucessful, UserError::SucessfulCampaign);
+        require(campaign_info.state != CampaignState::Successful, UserError::SuccessfulCampaign);
 
         // The author cannot claim after they have cancelled the campaign regardless of any other
         // checks
         require(campaign_info.state != CampaignState::Cancelled, CampaignError::CampaignHasBeenCancelled);
 
         // Mark the campaign as successful and overwrite the previous state with the updated version
-        campaign_info.state = CampaignState::Sucessful;
+        campaign_info.state = CampaignState::Successful;
         storage.campaign_info.insert(campaign_id, campaign_info);
 
         // We have updated the state of a campaign therefore we must log it
-        log(SucessfulCampaignEvent { campaign_id, total_signs });
+        log(SuccessfulCampaignEvent { campaign_id, total_signs });
     }
 
     #[storage(read, write)]
@@ -209,7 +209,7 @@ impl Petition for Contract {
         // A user should be able to unsign at any point except if the deadline has been reached
         // and the author has already ended the campaign
         if campaign_info.deadline <= height().as_u64() {
-            require(campaign_info.state != CampaignState::Sucessful, UserError::SucessfulCampaign);
+            require(campaign_info.state != CampaignState::Successful, UserError::SuccessfulCampaign);
         }
 
         // Check if the user has pledged to the campaign they are attempting to unsign from

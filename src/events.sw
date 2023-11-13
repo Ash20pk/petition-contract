@@ -9,7 +9,7 @@ pub struct CancelledCampaignEvent {
 }
 
 /// Event for when the proceeds of a campaign are claimed.
-pub struct SucessfulCampaignEvent {
+pub struct SuccessfulCampaignEvent {
     /// The unique identifier for the campaign.
     campaign_id: u64,
     total_signs: u64,
