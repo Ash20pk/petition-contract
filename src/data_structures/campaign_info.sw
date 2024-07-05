@@ -5,13 +5,13 @@ use ::data_structures::campaign_state::CampaignState;
 /// General data structure containing information about a campaign.
 pub struct CampaignInfo {
     /// The user who has created the campaign.
-    author: Identity,
+    pub author: Identity,
     // Whether the campaign is currently: in-progress, successful, Cancelled.
-    state: CampaignState,
+    pub state: CampaignState,
     /// The end time for the campaign after which it becomes locked.
-    deadline: u64,
+    pub deadline: u64,
     /// Total amount of signs received
-    total_signs: u64,
+    pub total_signs: u64,
 }
 
 impl CampaignInfo {

@@ -5,11 +5,11 @@ use core::ops::Eq;
 /// Represents the current state of the campaign.
 pub enum CampaignState {
     /// The campaign has been cancelled.
-    Cancelled: (),
+    pub Cancelled: (),
     /// The campain was successful
-    Successful: (),
+    pub Successful: (),
     /// The campaign is still accepting funds.
-    Progress: (),
+    pub Progress: (),
 }
 
 impl Eq for CampaignState {

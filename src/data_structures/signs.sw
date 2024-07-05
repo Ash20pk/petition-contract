@@ -3,9 +3,9 @@ library;
 /// Used to track the amount signd by a user to a specific campaign.
 pub struct Signs {
     /// Signing to a campaign; it should be always 1
-    sign: u8,
+    pub sign: u8,
     /// The unique identifier for the campaign.
-    campaign_id: u64,
+    pub campaign_id: u64,
 }
 
 impl Signs {
